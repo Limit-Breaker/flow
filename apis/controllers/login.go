@@ -1,32 +1,28 @@
-package handler
+package controllers
 
 import (
-	"flow/common"
+	"flow/common/response"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/mojocn/base64Captcha"
-	"net/http"
 )
 
 func GenerateCaptcha(c *gin.Context) {
-	id, b64s, err := DriverDigitFunc()
-	res := common.Response{}
+	id, b64s, err := driverDigitFunc()
 	if err != nil {
 		fmt.Println("generate captcha failed: ", err)
-		res.Msg = err.Error()
-		c.JSON(http.StatusOK, res.ResponseErr(10001))
+		response.BusinessFail(c, err.Error())
 	}
-
 	data := gin.H{
 		"id":      id,
 		"captcha": b64s,
 	}
-	res.Data = data
-	c.JSON(http.StatusOK, res.ResponseOK())
+
+	response.Success(c, data)
 }
 
-func DriverDigitFunc() (id, b64s string, err error) {
+func driverDigitFunc() (id, b64s string, err error) {
 	// configJsonBody json request body.
 	type configJsonBody struct {
 		Id            string

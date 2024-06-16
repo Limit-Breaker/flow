@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"log"
-	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -31,7 +30,6 @@ var (
 		Short:   "Start API server",
 		Example: "flow server config/settings.yml",
 		PreRun: func(cmd *cobra.Command, args []string) {
-			usage()
 			setup()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -46,13 +44,9 @@ func init() {
 	StartCmd.PersistentFlags().StringVarP(&mode, "mode", "m", "dev", "server mode ; eg:dev,test,prod")
 }
 
-func usage() {
-	usageStr := `starting api server`
-	slog.Info("%s\n", usageStr)
-}
-
 func setup() {
 	config.MustLoad(settings)
+	Migrate(config.DB)
 }
 
 func run() error {
@@ -89,7 +83,5 @@ func run() error {
 		log.Fatal("Server Shutdown:", err)
 	}
 	log.Println("Server exiting")
-	return nil
-
 	return nil
 }

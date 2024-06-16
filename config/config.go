@@ -33,4 +33,9 @@ func MustLoad(path string) {
 		panic("config not found settings.application")
 	}
 	ApplicationConfig = InitApplication(appCfg)
+	dbCfg := viper.Sub("database")
+	if dbCfg == nil {
+		panic("config not found settings.database")
+	}
+	DB = InitDB(dbCfg)
 }
